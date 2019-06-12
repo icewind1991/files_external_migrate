@@ -13,7 +13,7 @@ Normally, when changing the configuration of an external storage, all file metad
 that the files on the new configuration are the same files as on the old one, this app bypasses that but the administrator is responsible for ensuring that
 the new configuration holds the same files as the old ones. This is mainly aimed at migrating storage servers to a new hostname.
 
-Even with the help od this app this is a potential destructive operation, it's highly recommended that you make a backup of your database,
+Even with the help of this app this is a potential destructive operation, it's highly recommended that you make a backup of your database,
 disable the Nextcloud cron job and stop the webserver before using the app.
 	</description>
 	<version>0.1.0</version>
