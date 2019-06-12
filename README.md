@@ -10,3 +10,9 @@ the new configuration holds the same files as the old ones. This is mainly aimed
 
 Even with the help of this app this is a potential destructive operation, it's highly recommended that you make a backup of your database,
 disable the Nextcloud cron job and stop the webserver before using the app.
+
+## Usage
+
+- Find the id of the storage you want to change: `occ files_external:list`
+- Run the migration scripts setting options for the storage: `occ files_external_migrate:migrate <storage_id> key1=value1 key2=value2`
+- The app will do a quick sanity check of the new configuration and confirm that it should be saved 
