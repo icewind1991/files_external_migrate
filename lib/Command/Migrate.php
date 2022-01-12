@@ -45,6 +45,9 @@ class Migrate extends Base {
 		$this->connection = $connection;
 	}
 
+	/**
+	 * @return void
+	 */
 	protected function configure() {
 		$this
 			->setName('files_external_migrate:migrate')
@@ -105,19 +108,25 @@ class Migrate extends Base {
 				$output->writeln("<error>New storage configuration does not contain the same files</error>");
 			}
 		}
+		return 0;
 	}
 
-	private function dumpConfig(OutputInterface $output, array $config) {
+	private function dumpConfig(OutputInterface $output, array $config): void {
 		foreach ($config as $key => $value) {
 			$output->writeln("\t$key = $value");
 		}
 	}
 
-	private function listRoot(IStorage $storage) {
+	/**
+	 * @return string[]
+	 *
+	 * @psalm-return list<string>
+	 */
+	private function listRoot(IStorage $storage): array {
 		$dh = $storage->opendir('');
 		$content = [];
 		while ($file = readdir($dh)) {
-			if ($file !== '.' || $file !== '..') {
+			if ($file !== '.' && $file !== '..') {
 				$content[] = $file;
 			}
 		}
@@ -125,7 +134,7 @@ class Migrate extends Base {
 		return $content;
 	}
 
-	private function updateStorageId($oldId, $newId) {
+	private function updateStorageId(string $oldId, string $newId): void {
 		$query = $this->connection->getQueryBuilder();
 
 		$query->update('storages', 's')
