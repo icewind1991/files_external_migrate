@@ -7,7 +7,7 @@
 	<description>
 This app is experimental, use at your own risk and make backups!!
 
-This application helps migrating you external storage to a new configuration while maintaining all file metadata.
+This application helps to migrate an external storage to a new configuration while maintaining all file metadata.
 
 Normally, when changing the configuration of an external storage, all file metadata will be lost, this is because Nextcloud can not be sure
 that the files on the new configuration are the same files as on the old one, this app bypasses that but the administrator is responsible for ensuring that
@@ -26,7 +26,7 @@ disable the Nextcloud cron job and stop the webserver before using the app.
 	<bugs>https://github.com/icewind1991/files_external_migrate/issues</bugs>
 
 	<dependencies>
-		<nextcloud min-version="15" max-version="17"/>
+		<nextcloud min-version="20" max-version="23"/>
 	</dependencies>
 
 	<commands>
