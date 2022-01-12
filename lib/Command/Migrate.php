@@ -30,6 +30,7 @@ use OCP\Files\Storage\IStorage;
 use OCP\IDBConnection;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -51,7 +52,7 @@ class Migrate extends Base {
 	protected function configure() {
 		$this
 			->setName('files_external_migrate:migrate')
-			->setDescription('Delete an external mount')
+			->setDescription('Migrate the config of an external storage')
 			->addArgument(
 				'mount_id',
 				InputArgument::REQUIRED,
@@ -60,11 +61,17 @@ class Migrate extends Base {
 				'options',
 				InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
 				'The configuration values to set, as "key=value" pairs'
+			)->addOption(
+				'no-confirm',
+				'y',
+				InputOption::VALUE_NONE,
+				'Don\'t ask for confirmation'
 			);
 		parent::configure();
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+		$noConfirm = (bool)$input->getOption('no-confirm');
 		$mount = $this->globalService->getStorage((int)$input->getArgument('mount_id'));
 		$newOptions = array_reduce($input->getArgument('options'), function ($options, $keyValue) {
 			[$key, $value] = explode('=', $keyValue);
@@ -96,10 +103,15 @@ class Migrate extends Base {
 				$output->writeln("New configuration:");
 				$this->dumpConfig($output, $mergedOptions);
 
-				$helper = $this->getHelper('question');
-				$question = new ConfirmationQuestion('Save this configuration? ', false);
+				if ($noConfirm) {
+					$continue = true;
+				} else {
+					$helper = $this->getHelper('question');
+					$question = new ConfirmationQuestion('Save this configuration? ', false);
+					$continue = $helper->ask($input, $output, $question);
+				}
 
-				if ($helper->ask($input, $output, $question)) {
+				if ($continue) {
 					$this->updateStorageId($oldStorage->getId(), $newStorage->getId());
 					$this->globalService->updateStorage($mount);
 					$output->writeln("Configuration saved");
@@ -137,7 +149,7 @@ class Migrate extends Base {
 	private function updateStorageId(string $oldId, string $newId): void {
 		$query = $this->connection->getQueryBuilder();
 
-		$query->update('storages', 's')
+		$query->update('storages')
 			->set('id', $query->createNamedParameter($newId))
 			->where($query->expr()->eq('id', $query->createNamedParameter($oldId)));
 		$query->execute();

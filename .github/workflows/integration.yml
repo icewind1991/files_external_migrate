@@ -1,4 +1,4 @@
-name: PHPUnit
+name: Integration test
 on: [push, pull_request]
 
 env:
@@ -56,6 +56,25 @@ jobs:
           ./occ app:enable --force files_external
           ./occ app:enable --force ${{ env.APP_NAME }}
           php -S localhost:8080 &
-      - name: PHPUnit
-        working-directory: apps/${{ env.APP_NAME }}
-        run: ./vendor/phpunit/phpunit/phpunit -c tests/phpunit.xml
+      - name: Setup storage
+        run: |
+          sudo mkdir /base
+          sudo chmod 0777 /base
+          mkdir /base/storage1
+          mkdir /base/storage1/foo
+          echo "asd" > /base/storage1/bar.txt
+          ln -s /base/storage1 /base/storage2
+      - name: Test migration
+        run: |
+          ./occ files_external:create /tmp local null::null --config datadir=/base/storage1
+          ./occ files_external:list
+          ./occ files:scan admin
+          BEFORE=$(curl -s -X PROPFIND -u admin:password 'http://localhost:8080/remote.php/dav/files/admin/tmp/bar.txt' --data '<?xml version="1.0"?><d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns" xmlns:ocs="http://open-collaboration-services.org/ns"><d:prop><oc:fileid /></d:prop></d:propfind>' | grep -oEi 'fileid>[0-9]+' | grep -oEi '[0-9]+')
+          echo "File id before migration $BEFORE"
+          ./occ files_external_migrate:migrate 1 datadir=/base/storage2 --no-confirm
+          ./occ files_external:list
+          ./occ files:scan admin
+          AFTER=$(curl -s -X PROPFIND -u admin:password 'http://localhost:8080/remote.php/dav/files/admin/tmp/bar.txt' --data '<?xml version="1.0"?><d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns" xmlns:ocs="http://open-collaboration-services.org/ns"><d:prop><oc:fileid /></d:prop></d:propfind>' | grep -oEi 'fileid>[0-9]+' | grep -oEi '[0-9]+')
+          echo "File id after migration $AFTER"
+          [ "$BEFORE" = "$AFTER" ]
+
