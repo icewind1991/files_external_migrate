@@ -2,7 +2,7 @@
 
 ## This app is experimental, use at your own risk and make backups!! ##
 
-This application helps migrating you external storage to a new configuration while maintaining all file metadata.
+This application to migrate an external storage to a new configuration while maintaining all file metadata.
 
 Normally, when changing the configuration of an external storage, all file metadata will be lost, this is because Nextcloud can not be sure
 that the files on the new configuration are the same files as on the old one, this app bypasses that but the administrator is responsible for ensuring that
