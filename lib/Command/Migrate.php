@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Robin Appelman <robin@icewind.nl>
  *
@@ -36,7 +38,7 @@ class Migrate extends Base {
 	protected $userService;
 	protected $connection;
 
-	function __construct(GlobalStoragesService $globalService, UserStoragesService $userService, IDBConnection $connection) {
+	public function __construct(GlobalStoragesService $globalService, UserStoragesService $userService, IDBConnection $connection) {
 		parent::__construct();
 		$this->globalService = $globalService;
 		$this->userService = $userService;
@@ -62,7 +64,7 @@ class Migrate extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$mount = $this->globalService->getStorage((int)$input->getArgument('mount_id'));
 		$newOptions = array_reduce($input->getArgument('options'), function ($options, $keyValue) {
-			list($key, $value) = explode('=', $keyValue);
+			[$key, $value] = explode('=', $keyValue);
 			$options[$key] = $value;
 			return $options;
 		}, []);

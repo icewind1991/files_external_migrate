@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Robin Appelman <robin@icewind.nl>
  *
@@ -24,9 +26,7 @@ namespace OCA\FilesExternalMigrate\AppInfo;
 use \OCP\AppFramework\App;
 
 class Application extends App {
-
 	public function __construct(array $urlParams = []) {
 		parent::__construct('files_external_migrate', $urlParams);
 	}
-
 }
