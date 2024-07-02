@@ -26,7 +26,7 @@ disable the Nextcloud cron job and stop the webserver before using the app.
 	<bugs>https://github.com/icewind1991/files_external_migrate/issues</bugs>
 
 	<dependencies>
-		<nextcloud min-version="20" max-version="23"/>
+		<nextcloud min-version="26" max-version="29"/>
 	</dependencies>
 
 	<commands>
