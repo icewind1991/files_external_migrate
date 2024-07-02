@@ -10,7 +10,10 @@
 		<directory name="lib"/>
 	</projectFiles>
 	<extraFiles>
-		<directory name="vendor/christophwurst/nextcloud"/>
+		<directory name="vendor" />
+		<ignoreFiles>
+			<directory name="vendor/phpunit/php-code-coverage" />
+		</ignoreFiles>
 	</extraFiles>
 	<stubs>
 		<file name="tests/stubs/stub.phpstub" preloadClasses="true"/>
